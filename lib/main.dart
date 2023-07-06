@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:nadiku/homescreen.dart';
 import 'package:nadiku/login.dart';
+import 'package:nadiku/main_appbar.dart';
+import 'package:nadiku/main_scaffold.dart';
 import 'package:nadiku/signup.dart';
 
 void main() {
@@ -13,12 +16,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: "Flutter Demo",
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: LoginPage(),
-    );
+        debugShowCheckedModeBanner: false,
+        title: "Flutter Bluetooth",
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: MainScaffold());
   }
 }
