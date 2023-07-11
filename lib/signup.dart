@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nadiku/main.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -10,9 +12,15 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  TextEditingController etNama = TextEditingController();
-  TextEditingController etEmail = TextEditingController();
-  TextEditingController etPassword = TextEditingController();
+  final etEmail = TextEditingController();
+  final etPassword = TextEditingController();
+  @override
+  void dispose() {
+    etEmail.dispose();
+    etPassword.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,21 +61,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TextField(
-          controller: etNama,
-          decoration: InputDecoration(
-            hintText: "Nama",
-            fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
-            filled: true,
-            prefixIcon: Icon(Icons.person),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(18), borderSide: BorderSide.none),
-          ),
-        ),
-        SizedBox(
-          height: 10,
-        ),
+        // TextField(
+        //   controller: etNama,
+        //   decoration: InputDecoration(
+        //     hintText: "Nama",
+        //     fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
+        //     filled: true,
+        //     prefixIcon: Icon(Icons.person),
+        //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(18), borderSide: BorderSide.none),
+        //   ),
+        // ),
+        // SizedBox(
+        //   height: 10,
+        // ),
         TextField(
           controller: etEmail,
+          textInputAction: TextInputAction.next,
           decoration: InputDecoration(
             hintText: "Email",
             fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
@@ -81,6 +90,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         TextField(
           controller: etPassword,
+          textInputAction: TextInputAction.done,
           decoration: InputDecoration(
             hintText: "Password",
             fillColor: Theme.of(context).primaryColor.withOpacity(0.1),
@@ -108,9 +118,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         ElevatedButton(
           onPressed: () {
-            log(etNama.text);
             log(etEmail.text);
             log(etPassword.text);
+            register(context);
           },
           child: Text(
             "Daftarkan",
@@ -124,6 +134,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
         )
       ],
     );
+  }
+
+  Future register(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(child: CircularProgressIndicator()),
+    );
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: etEmail.text.trim(),
+        password: etPassword.text.trim(),
+      );
+    } on FirebaseAuthException catch (e) {
+      print(e);
+    }
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 
   _loginInfo(context) {
