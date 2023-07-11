@@ -41,10 +41,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Column(
       children: [
         Text(
-          "Create Account",
+          "Buat Akun Baru",
           style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
         ),
-        Text("Enter details to get started"),
+        Text("Masukan detail untuk memulai"),
       ],
     );
   }
@@ -113,7 +113,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             log(etPassword.text);
           },
           child: Text(
-            "Sign Up",
+            "Daftarkan",
             style: TextStyle(fontSize: 20),
           ),
           style: ElevatedButton.styleFrom(
@@ -130,7 +130,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Already have an account?"),
+        Text("Sudah punya akun?"),
         TextButton(
             onPressed: () {
               Navigator.pop(context);

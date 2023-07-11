@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "767782292407",
+    "project_id": "tugas-akhir-42e52",
+    "storage_bucket": "tugas-akhir-42e52.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:767782292407:android:db9dd3b9ea72e7a098f632",
+        "android_client_info": {
+          "package_name": "com.example.nadiku"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "767782292407-ogkeb9d2kcfjbuocvfrqbe29f4tem5ds.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCga1iPqV4--cpaxuvbzWl2vyDykB5lOPU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "767782292407-ogkeb9d2kcfjbuocvfrqbe29f4tem5ds.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -29,10 +29,10 @@ class LoginPage extends StatelessWidget {
     return Column(
       children: [
         Text(
-          "Welcome Back",
+          "Selamat datang",
           style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
         ),
-        Text("Enter your credential to login"),
+        Text("Masukan informasi Login anda"),
       ],
     );
   }
@@ -77,7 +77,7 @@ class LoginPage extends StatelessWidget {
     return TextButton(
       onPressed: () {},
       style: TextButton.styleFrom(primary: Color.fromRGBO(238, 138, 96, 1)),
-      child: Text("Forgot password?"),
+      child: Text("Lupa Password?"),
     );
   }
 
@@ -85,7 +85,7 @@ class LoginPage extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("Dont have an account? "),
+        Text("Belum punya akun? "),
         TextButton(
             onPressed: () {
               Navigator.push(
@@ -94,7 +94,7 @@ class LoginPage extends StatelessWidget {
               );
             },
             style: TextButton.styleFrom(primary: Color.fromRGBO(238, 138, 96, 1)),
-            child: Text("Sign Up"))
+            child: Text("Daftar disini"))
       ],
     );
   }
