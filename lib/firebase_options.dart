@@ -44,44 +44,40 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDZYhuVrFl77Nir9FaeQS24PoR3_UbY1R0',
-    appId: '1:92050507217:web:3d54cd5a371993da030cf0',
-    messagingSenderId: '92050507217',
-    projectId: 'tubes-mipro-e0108',
-    authDomain: 'tubes-mipro-e0108.firebaseapp.com',
-    databaseURL: 'https://tubes-mipro-e0108-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'tubes-mipro-e0108.appspot.com',
-    measurementId: 'G-F0V9ML6WV4',
+    apiKey: 'AIzaSyAIDzRHSa17SV-zp3x0w4z2WxnuTIfXD5o',
+    appId: '1:767782292407:web:424733498638861798f632',
+    messagingSenderId: '767782292407',
+    projectId: 'tugas-akhir-42e52',
+    authDomain: 'tugas-akhir-42e52.firebaseapp.com',
+    storageBucket: 'tugas-akhir-42e52.appspot.com',
+    measurementId: 'G-CH9BM9T15C',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCoSGvGowMQVky9_25V6dD63dCw5tuojSY',
-    appId: '1:92050507217:android:3bfeda092bbcc4ca030cf0',
-    messagingSenderId: '92050507217',
-    projectId: 'tubes-mipro-e0108',
-    databaseURL: 'https://tubes-mipro-e0108-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'tubes-mipro-e0108.appspot.com',
+    apiKey: 'AIzaSyCga1iPqV4--cpaxuvbzWl2vyDykB5lOPU',
+    appId: '1:767782292407:android:9c1d41cf59a00d6698f632',
+    messagingSenderId: '767782292407',
+    projectId: 'tugas-akhir-42e52',
+    storageBucket: 'tugas-akhir-42e52.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBcKiCTumlTykkmGqiMiHBuxw6D0o-_R3I',
-    appId: '1:92050507217:ios:0443fe5bbf77ebf2030cf0',
-    messagingSenderId: '92050507217',
-    projectId: 'tubes-mipro-e0108',
-    databaseURL: 'https://tubes-mipro-e0108-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'tubes-mipro-e0108.appspot.com',
-    iosClientId: '92050507217-erbpkdtgk8blg2v8c24apq0eed89ml6c.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBED9W9ccDQMsYqWRETYmQ-xXfUmkME7lc',
+    appId: '1:767782292407:ios:906bc5c5b5c5042c98f632',
+    messagingSenderId: '767782292407',
+    projectId: 'tugas-akhir-42e52',
+    storageBucket: 'tugas-akhir-42e52.appspot.com',
+    iosClientId: '767782292407-2n9h7gvlld9oalovb2401r59nembe0af.apps.googleusercontent.com',
     iosBundleId: 'com.example.nadiku',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBcKiCTumlTykkmGqiMiHBuxw6D0o-_R3I',
-    appId: '1:92050507217:ios:0443fe5bbf77ebf2030cf0',
-    messagingSenderId: '92050507217',
-    projectId: 'tubes-mipro-e0108',
-    databaseURL: 'https://tubes-mipro-e0108-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'tubes-mipro-e0108.appspot.com',
-    iosClientId: '92050507217-erbpkdtgk8blg2v8c24apq0eed89ml6c.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBED9W9ccDQMsYqWRETYmQ-xXfUmkME7lc',
+    appId: '1:767782292407:ios:906bc5c5b5c5042c98f632',
+    messagingSenderId: '767782292407',
+    projectId: 'tugas-akhir-42e52',
+    storageBucket: 'tugas-akhir-42e52.appspot.com',
+    iosClientId: '767782292407-2n9h7gvlld9oalovb2401r59nembe0af.apps.googleusercontent.com',
     iosBundleId: 'com.example.nadiku',
   );
 }

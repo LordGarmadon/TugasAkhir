@@ -1,35 +1,77 @@
 {
   "project_info": {
-    "project_number": "92050507217",
-    "firebase_url": "https://tubes-mipro-e0108-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "tubes-mipro-e0108",
-    "storage_bucket": "tubes-mipro-e0108.appspot.com"
+    "project_number": "767782292407",
+    "project_id": "tugas-akhir-42e52",
+    "storage_bucket": "tugas-akhir-42e52.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:92050507217:android:3bfeda092bbcc4ca030cf0",
+        "mobilesdk_app_id": "1:767782292407:android:52ef31149103850b98f632",
         "android_client_info": {
-          "package_name": "com.example.nadiku"
+          "package_name": "com.example.coba"
         }
       },
       "oauth_client": [
         {
-          "client_id": "92050507217-98sn16d9rfe1vke4jbuvke0nlkrkrsf8.apps.googleusercontent.com",
+          "client_id": "767782292407-ogkeb9d2kcfjbuocvfrqbe29f4tem5ds.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCoSGvGowMQVky9_25V6dD63dCw5tuojSY"
+          "current_key": "AIzaSyCga1iPqV4--cpaxuvbzWl2vyDykB5lOPU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "92050507217-98sn16d9rfe1vke4jbuvke0nlkrkrsf8.apps.googleusercontent.com",
+              "client_id": "767782292407-ogkeb9d2kcfjbuocvfrqbe29f4tem5ds.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "767782292407-ecvkqsaamjpiodtmq4onf6avd35lfb96.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.coba"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:767782292407:android:9c1d41cf59a00d6698f632",
+        "android_client_info": {
+          "package_name": "com.example.nadiku"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "767782292407-ogkeb9d2kcfjbuocvfrqbe29f4tem5ds.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCga1iPqV4--cpaxuvbzWl2vyDykB5lOPU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "767782292407-ogkeb9d2kcfjbuocvfrqbe29f4tem5ds.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "767782292407-ecvkqsaamjpiodtmq4onf6avd35lfb96.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.coba"
+              }
             }
           ]
         }

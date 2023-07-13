@@ -21,7 +21,13 @@ class _MainScaffoldState extends State<MainScaffold> {
   @override
   Widget build(BuildContext context) {
     return MainAppBar(
-      body: widgets[index],
+      body: (record) => ListView(
+        children: [
+          HomeScreen(
+            snapshot: record,
+          )
+        ],
+      ),
       onSelectIndex: (i) {
         setState(() {
           index = i;

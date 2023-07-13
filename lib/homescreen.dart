@@ -2,13 +2,17 @@
 
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nadiku/size.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+import 'main.dart';
 
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key, this.snapshot});
+  final QuerySnapshot? snapshot;
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -23,6 +27,12 @@ class _HomeScreenState extends State<HomeScreen> {
     _timeDateString = _formatDateTime(DateTime.now());
     Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _getTime();
+    super.dispose();
   }
 
   @override
@@ -46,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: Text(
-                      "Azaria",
+                      FirebaseAuth.instance.currentUser!.email!,
                       style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                   ),
@@ -66,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                   Text(
-                    "120/60",
+                    widget.snapshot != null ? "${widget.snapshot!.docs.first['systole']}/${widget.snapshot!.docs.first['diastole']}" : "0/0",
                     style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                 ],
@@ -75,7 +85,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      logout(context);
+                    },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
                     ),
@@ -111,23 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Container(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                decoration: BoxDecoration(
-                  border: Border(right: BorderSide(color: Colors.white)),
-                ),
-                height: double.infinity,
-                width: Sizes.width(context) * .3,
-                child: Column(
-                  children: [
-                    Text(
-                      "Nama",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                padding: EdgeInsets.symmetric(vertical: 10),
                 height: double.infinity,
                 width: Sizes.width(context) * .3,
                 child: Column(
@@ -136,11 +132,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       "Systole/Diastole",
                       style: TextStyle(color: Colors.white),
                     ),
+                    if (widget.snapshot != null)
+                      ...widget.snapshot!.docs.map(
+                        (e) => Text(
+                          "${e['systole']}/${e['diastole']}",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      )
                   ],
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                padding: EdgeInsets.symmetric(
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   border: Border(
                     left: BorderSide(
@@ -165,6 +170,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           "Waktu",
                           style: TextStyle(color: Colors.white),
                         ),
+                        if (widget.snapshot != null)
+                          ...widget.snapshot!.docs.map(
+                            (e) => Text(
+                              "${DateFormat('dd/MM/yy/hh:mm').format(DateTime.parse(e['recorded_time'].toDate().toString()))}",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )
                       ],
                     )),
               ),
@@ -173,6 +185,40 @@ class _HomeScreenState extends State<HomeScreen> {
         )
       ],
     );
+  }
+
+  String readTimestamp(int timestamp) {
+    var now = new DateTime.now();
+    var format = new DateFormat('HH:mm a');
+    var date = new DateTime.fromMicrosecondsSinceEpoch(timestamp * 1000);
+    var diff = date.difference(now);
+    var time = '';
+
+    if (diff.inSeconds <= 0 || diff.inSeconds > 0 && diff.inMinutes == 0 || diff.inMinutes > 0 && diff.inHours == 0 || diff.inHours > 0 && diff.inDays == 0) {
+      time = format.format(date);
+    } else {
+      if (diff.inDays == 1) {
+        time = diff.inDays.toString() + 'DAY AGO';
+      } else {
+        time = diff.inDays.toString() + 'DAYS AGO';
+      }
+    }
+
+    return time;
+  }
+
+  Future logout(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(child: CircularProgressIndicator()),
+    );
+    try {
+      await FirebaseAuth.instance.signOut();
+    } on FirebaseAuthException catch (e) {
+      print(e);
+    }
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 
   void _getTime() {
@@ -190,6 +236,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String _formatDateTime(DateTime dateTime) {
-    return DateFormat('EEEE/MM/dd/yy').format(dateTime);
+    return DateFormat('EEEE/dd/MM/yy').format(dateTime);
   }
 }
