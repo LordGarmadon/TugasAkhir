@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HealthDetail {
   HealthDetail({
-    required this.email,
+    required this.userId,
     required this.systole,
     required this.diastole,
     required this.recordedTime,
@@ -10,22 +10,22 @@ class HealthDetail {
 
   HealthDetail.fromJson(Map<String, Object?> json)
       : this(
-          email: json['email']! as String,
-          systole: json['systole']! as String,
-          diastole: json['diastole']! as String,
+          userId: json['user_id']! as String,
+          systole: json['sistol']! as int,
+          diastole: json['diastol']! as int,
           recordedTime: json['recorded_time']! as Timestamp,
         );
 
-  final String email;
-  final String systole;
-  final String diastole;
+  final String userId;
+  final int systole;
+  final int diastole;
   final Timestamp recordedTime;
 
   Map<String, Object?> toJson() {
     return {
-      'email': email,
-      'systole': systole,
-      'diastole': diastole,
+      'user_id': userId,
+      'sistol': systole,
+      'diastol': diastole,
       'recorded_time': recordedTime,
     };
   }

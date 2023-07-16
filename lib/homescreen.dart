@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:nadiku/size.dart';
 
 import 'main.dart';
+import 'model/health_detail.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.snapshot});
@@ -20,7 +22,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String _timeHMString = "";
   String _timeDateString = "";
-
+  QuerySnapshot? onSnapshot;
   @override
   void initState() {
     _timeHMString = _formatHourMinute(DateTime.now());
@@ -76,7 +78,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                   Text(
-                    widget.snapshot != null ? "${widget.snapshot!.docs.first['systole']}/${widget.snapshot!.docs.first['diastole']}" : "0/0",
+                    widget.snapshot != null
+                        ? "${widget.snapshot!.docs.first['systole']}/${widget.snapshot!.docs.first['diastole']}"
+                        : "0/0",
                     style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                 ],
@@ -89,7 +93,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       logout(context);
                     },
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.red),
                     ),
                     child: Text(
                       "Disconnect",
@@ -106,6 +111,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               )
             ],
+          ),
+        ),
+        // Hapus nanti
+        GestureDetector(
+          onTap: () {
+            /// test add document
+            String userId = FirebaseAuth.instance.currentUser!.uid;
+            addDocs(userId);
+          },
+          child: Container(
+            height: 50,
+            width: 150,
+            decoration: BoxDecoration(color: Colors.purple),
+            child: Text(
+              "Test",
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ),
         Container(
@@ -173,7 +195,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (widget.snapshot != null)
                           ...widget.snapshot!.docs.map(
                             (e) => Text(
-                              "${DateFormat('dd/MM/yy/hh:mm').format(DateTime.parse(e['recorded_time'].toDate().toString()))}",
+                              DateFormat('dd/MM/yy/hh:mm').format(
+                                  DateTime.parse(
+                                      e['recorded_time'].toDate().toString())),
                               style: TextStyle(color: Colors.white),
                             ),
                           )
@@ -188,19 +212,22 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String readTimestamp(int timestamp) {
-    var now = new DateTime.now();
-    var format = new DateFormat('HH:mm a');
-    var date = new DateTime.fromMicrosecondsSinceEpoch(timestamp * 1000);
+    var now = DateTime.now();
+    var format = DateFormat('HH:mm a');
+    var date = DateTime.fromMicrosecondsSinceEpoch(timestamp * 1000);
     var diff = date.difference(now);
     var time = '';
 
-    if (diff.inSeconds <= 0 || diff.inSeconds > 0 && diff.inMinutes == 0 || diff.inMinutes > 0 && diff.inHours == 0 || diff.inHours > 0 && diff.inDays == 0) {
+    if (diff.inSeconds <= 0 ||
+        diff.inSeconds > 0 && diff.inMinutes == 0 ||
+        diff.inMinutes > 0 && diff.inHours == 0 ||
+        diff.inHours > 0 && diff.inDays == 0) {
       time = format.format(date);
     } else {
       if (diff.inDays == 1) {
-        time = diff.inDays.toString() + 'DAY AGO';
+        time = "${diff.inDays.toString()}DAY AGO";
       } else {
-        time = diff.inDays.toString() + 'DAYS AGO';
+        time = "${diff.inDays.toString()}DAYS AGO";
       }
     }
 
@@ -216,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       await FirebaseAuth.instance.signOut();
     } on FirebaseAuthException catch (e) {
-      print(e);
+      log(e.toString());
     }
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
@@ -237,5 +264,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String _formatDateTime(DateTime dateTime) {
     return DateFormat('EEEE/dd/MM/yy').format(dateTime);
+  }
+
+  Future getDocs() async {
+    CollectionReference records =
+        FirebaseFirestore.instance.collection('health_nadiku');
+    var fetchedRecords = await records.get();
+    setState(() {
+      onSnapshot = fetchedRecords;
+    });
+  }
+
+  Future addDocs(String userID) async {
+    var detail = HealthDetail(
+        userId: userID,
+        systole: 160,
+        diastole: 50,
+        recordedTime: Timestamp.fromDate(DateTime.now()));
+    FirebaseFirestore.instance
+        .collection('health_nadiku')
+        .add(detail.toJson())
+        .then((value) => log(value.id));
   }
 }

@@ -1,12 +1,14 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:nadiku/model/health_detail.dart';
 
 class MainAppBar extends StatefulWidget {
-  const MainAppBar({super.key, required this.body, required this.onSelectIndex, this.index = 0});
-  final Widget Function(QuerySnapshot? records) body;
+  const MainAppBar(
+      {super.key,
+      required this.body,
+      required this.onSelectIndex,
+      this.index = 0});
+  final Widget body;
   final void Function(int) onSelectIndex;
   final int index;
   @override
@@ -14,7 +16,6 @@ class MainAppBar extends StatefulWidget {
 }
 
 class _MainAppBarState extends State<MainAppBar> {
-  QuerySnapshot? onRecords;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,28 +72,7 @@ class _MainAppBarState extends State<MainAppBar> {
           ],
         ),
       ),
-      body: widget.body(onRecords),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          getDocs();
-        },
-      ),
+      body: widget.body,
     );
-  }
-
-  Future getDocs() async {
-    CollectionReference records = FirebaseFirestore.instance.collection('record');
-    var fetched_records = await records.get();
-    setState(() {
-      onRecords = fetched_records;
-    });
-  }
-
-  Future addDocs() async {
-    FirebaseFirestore.instance.collection('record').withConverter<HealthDetail>(
-          fromFirestore: (snapshot, _) => HealthDetail.fromJson(snapshot.data()!),
-          toFirestore: (movie, _) => movie.toJson(),
-        );
   }
 }

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nadiku/daftar_koneksi_screen.dart';
 import 'package:nadiku/homescreen.dart';
-import 'package:nadiku/how_to_use_screen.dart';
 import 'package:nadiku/main_appbar.dart';
 
 class MainScaffold extends StatefulWidget {
@@ -13,20 +11,17 @@ class MainScaffold extends StatefulWidget {
 
 class _MainScaffoldState extends State<MainScaffold> {
   int index = 0;
-  List<Widget> widgets = [
-    HomeScreen(),
-    DaftarKoneksi(),
-    HowToUse(),
-  ];
+  // unused for now
+  // List<Widget> widgets = [
+  //   HomeScreen(),
+  //   DaftarKoneksi(),
+  //   HowToUse(),
+  // ];
   @override
   Widget build(BuildContext context) {
     return MainAppBar(
-      body: (record) => ListView(
-        children: [
-          HomeScreen(
-            snapshot: record,
-          )
-        ],
+      body: ListView(
+        children: [HomeScreen()],
       ),
       onSelectIndex: (i) {
         setState(() {
