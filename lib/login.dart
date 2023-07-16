@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        //backgroundColor: Color.fromRGBO(82, 223, 254, 100),
+        backgroundColor: Color.fromRGBO(82, 223, 254, 100),
         body: Container(
           margin: EdgeInsets.all(24),
           child: Column(
@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
             style: TextStyle(fontSize: 20),
           ),
           style: ElevatedButton.styleFrom(
-            primary: Color.fromRGBO(238, 138, 96, 1),
+            primary: Color.fromRGBO(237, 121, 71, 1),
             shape: StadiumBorder(),
             padding: EdgeInsets.symmetric(vertical: 16),
           ),
@@ -111,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
 _forgotPassword(context) {
   return TextButton(
     onPressed: () {},
-    style: TextButton.styleFrom(primary: Color.fromRGBO(238, 138, 96, 1)),
+    style: TextButton.styleFrom(primary: Color.fromRGBO(237, 121, 71, 1)),
     child: Text("Lupa Password?"),
   );
 }
@@ -128,7 +128,7 @@ _signup(context) {
               MaterialPageRoute(builder: (context) => const SignUpScreen()),
             );
           },
-          style: TextButton.styleFrom(primary: Color.fromRGBO(238, 138, 96, 1)),
+          style: TextButton.styleFrom(primary: Color.fromRGBO(237, 121, 71, 1)),
           child: Text("Daftar disini"))
     ],
   );
