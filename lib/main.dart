@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:nadiku/login.dart';
 import 'package:nadiku/main_scaffold.dart';
+import 'package:nadiku/splashscreen.dart';
 
 import 'firebase_options.dart';
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: title,
         theme: ThemeData.dark().copyWith(colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue).copyWith(secondary: Colors.tealAccent)),
-        home: MainPage(),
+        home: Splashscreen(),
       );
 
   // This widget is the root of your application

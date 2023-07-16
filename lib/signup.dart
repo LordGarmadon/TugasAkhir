@@ -26,6 +26,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
+      backgroundColor: Color.fromRGBO(82, 223, 254, 100),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: ListView(
@@ -127,7 +128,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             style: TextStyle(fontSize: 20),
           ),
           style: ElevatedButton.styleFrom(
-            primary: Color.fromRGBO(238, 138, 96, 1),
+            primary: Color.fromRGBO(237, 121, 71, 1),
             shape: StadiumBorder(),
             padding: EdgeInsets.symmetric(vertical: 16),
           ),
@@ -162,7 +163,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             onPressed: () {
               Navigator.pop(context);
             },
-            style: TextButton.styleFrom(primary: Color.fromRGBO(238, 138, 96, 1)),
+            style: TextButton.styleFrom(primary: Color.fromRGBO(237, 121, 71, 1)),
             child: Text("Login"))
       ],
     );
