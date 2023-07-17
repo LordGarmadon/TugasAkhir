@@ -28,7 +28,9 @@ class MyApp extends StatelessWidget {
         navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         title: title,
-        theme: ThemeData.dark().copyWith(colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue).copyWith(secondary: Colors.tealAccent)),
+        theme: ThemeData.dark().copyWith(
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue).copyWith(secondary: Colors.tealAccent),
+        ),
         home: Splashscreen(),
       );
 

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:intl/intl.dart';
+import 'package:nadiku/custom/dotted_border.dart';
 import 'package:nadiku/size.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -152,12 +153,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           margin: EdgeInsets.all(15),
           padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
-            color: Colors.green,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(15),
           ),
           height: Sizes.height(context) * .275,
@@ -171,14 +173,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.all(10),
                     child: Text(
                       FirebaseAuth.instance.currentUser!.email!,
-                      style: TextStyle(fontSize: 20, color: Colors.white),
+                      style: TextStyle(fontSize: 20, color: Colors.black),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: Text(
                       _timeHMString,
-                      style: TextStyle(fontSize: 14, color: Colors.white),
+                      style: TextStyle(fontSize: 14, color: Colors.black),
                     ),
                   ),
                 ],
@@ -188,47 +190,68 @@ class _HomeScreenState extends State<HomeScreen> {
                 Center(
                   child: Text("Bluetooth Not Available"),
                 ),
-              if ((isBluetoothAvailable != null && isBluetoothAvailable!) && (connection == null || !connection!.isConnected) && !isLoading)
-                Center(
-                  child: Text("Connect To Nadiku First"),
+              // if ((isBluetoothAvailable != null && isBluetoothAvailable!) && (connection == null || !connection!.isConnected) && !isLoading)
+
+              DottedBorder(
+                color: Colors.black,
+                child: Container(
+                  padding: EdgeInsets.all(15),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.bluetooth,
+                        color: Colors.black,
+                      ),
+                      Text(
+                        "Aplikasi ini membutuhkan koneksi\nke alat Nadiku",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
                 ),
-              if ((isBluetoothAvailable != null && isBluetoothAvailable!) && (connection != null && connection!.isConnected) && onSnapshot == null && !isLoading)
-                Center(
-                  child: Text("Press Test Button Then Press Button On The Nadiku"),
-                ),
+              ),
+              // if ((isBluetoothAvailable != null && isBluetoothAvailable!) && (connection != null && connection!.isConnected) && onSnapshot == null && !isLoading)
+              // DottedBorder(
+              //   color: Colors.black,
+              //   child: Container(
+              //     padding: EdgeInsets.all(15),
+              //     child: Column(
+              //       children: [
+              //         Icon(
+              //           Icons.add,
+              //           color: Colors.black,
+              //         ),
+              //         Text(
+              //           "Tekan tombol hubungkan\nuntuk memunculkan data\ndari alat",
+              //           textAlign: TextAlign.center,
+              //           style: TextStyle(color: Colors.black),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
               if ((isBluetoothAvailable != null && isBluetoothAvailable!) && (connection != null && connection!.isConnected) && onSnapshot != null && !isLoading)
                 Column(
                   children: [
                     Text(
                       "Sistol/Diastol",
-                      style: TextStyle(fontSize: 20, color: Colors.white),
+                      style: TextStyle(fontSize: 20, color: Colors.black),
                     ),
                     Text(
                       isConnected ? "$systole/$diastole" : "0/0",
-                      style: TextStyle(fontSize: 20, color: Colors.white),
+                      style: TextStyle(fontSize: 20, color: Colors.black),
                     ),
                   ],
                 ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      logout(context);
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
-                    ),
-                    child: Text(
-                      "Disconnect",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: Text(
                       _timeDateString,
-                      style: TextStyle(fontSize: 12, color: Colors.white),
+                      style: TextStyle(fontSize: 12, color: Colors.black),
                     ),
                   ),
                 ],
@@ -255,15 +278,18 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             },
             child: Container(
-              height: 50,
-              width: 150,
-              decoration: BoxDecoration(color: Colors.purple),
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              margin: EdgeInsets.only(left: 15),
+              decoration: BoxDecoration(color: Colors.greenAccent, borderRadius: BorderRadius.circular(15)),
               child: Text(
-                "Test",
-                style: TextStyle(color: Colors.white),
+                "Hubungkan",
+                style: TextStyle(color: Colors.black, fontSize: 18),
               ),
             ),
           ),
+        SizedBox(
+          height: 15,
+        ),
         Container(
           margin: EdgeInsets.only(
             right: 15,
@@ -271,71 +297,157 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           // padding: EdgeInsets.only(right: 10, left: 10, top: 10, bottom: 10),
           decoration: BoxDecoration(
-            color: Colors.green,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(15),
           ),
-          height: Sizes.height(context) * .56,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          height: Sizes.height(context) * .325,
+          child: Column(
             children: [
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                height: double.infinity,
-                width: Sizes.width(context) * .3,
-                child: Column(
+              Flexible(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text(
-                      "Systole/Diastole",
-                      style: TextStyle(color: Colors.white),
+                    Container(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(15), bottomLeft: Radius.circular(15))),
+                      width: Sizes.width(context) * .1,
+                      child: Column(
+                        children: [
+                          Text(
+                            'No.',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          if (onSnapshot != null)
+                            ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: onSnapshot!.docs.length > 5 ? 5 : onSnapshot!.docs.length,
+                                itemBuilder: (context, i) => Column(
+                                      children: [
+                                        Text(
+                                          "${i + 1}",
+                                          style: TextStyle(color: Colors.black, fontSize: 16),
+                                        ),
+                                        Text(
+                                          "",
+                                          style: TextStyle(color: Colors.black, fontSize: 16),
+                                        ),
+                                      ],
+                                    ))
+                        ],
+                      ),
                     ),
-                    if (onSnapshot != null)
-                      ...onSnapshot!.docs.map(
-                        (e) => Text(
-                          "${e['sistol']}/${e['diastol']}",
-                          style: TextStyle(color: Colors.white),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        height: double.infinity,
+                        width: Sizes.width(context) * .3,
+                        child: Column(
+                          children: [
+                            Text(
+                              "Systole/Diastole",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            if (onSnapshot != null)
+                              ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: onSnapshot!.docs.length > 5 ? 5 : onSnapshot!.docs.length,
+                                  itemBuilder: (context, i) {
+                                    var e = onSnapshot!.docs[i];
+                                    return Column(
+                                      children: [
+                                        Text(
+                                          "${e['sistol']}/${e['diastol']}",
+                                          style: TextStyle(color: Colors.black, fontSize: 16),
+                                        ),
+                                        Text(
+                                          "",
+                                          style: TextStyle(color: Colors.black, fontSize: 16),
+                                        )
+                                      ],
+                                    );
+                                  })
+                          ],
                         ),
-                      )
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 10,
+                        ),
+                        height: double.infinity,
+                        width: Sizes.width(context) * .3,
+                        child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(15),
+                                bottomRight: Radius.circular(15),
+                              ),
+                            ),
+                            height: Sizes.height(context) * .1,
+                            width: Sizes.width(context) * .3,
+                            child: Column(
+                              children: [
+                                Text(
+                                  "Waktu",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                if (onSnapshot != null)
+                                  ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: onSnapshot!.docs.length > 5 ? 5 : onSnapshot!.docs.length,
+                                      itemBuilder: (context, i) {
+                                        var e = onSnapshot!.docs[i];
+                                        return Column(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              DateFormat('EEEE/dd/MM/yy').format(DateTime.parse(e['recorded_time'].toDate().toString())),
+                                              style: TextStyle(color: Colors.black, fontSize: 16),
+                                            ),
+                                            Text(
+                                              DateFormat('hh:mm').format(DateTime.parse(e['recorded_time'].toDate().toString())),
+                                              style: TextStyle(color: Colors.black, fontSize: 16),
+                                            )
+                                          ],
+                                        );
+                                      })
+                              ],
+                            )),
+                      ),
+                    ),
                   ],
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  border: Border(
-                    left: BorderSide(
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                height: double.infinity,
-                width: Sizes.width(context) * .3,
-                child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(15),
-                        bottomRight: Radius.circular(15),
-                      ),
-                    ),
-                    height: Sizes.height(context) * .1,
-                    width: Sizes.width(context) * .3,
-                    child: Column(
-                      children: [
-                        Text(
-                          "Waktu",
-                          style: TextStyle(color: Colors.white),
+                margin: EdgeInsets.all(5),
+                height: Sizes.height(context) * .05,
+                decoration: BoxDecoration(borderRadius: BorderRadius.only(bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15))),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        // fungsi download
+                      },
+                      child: Container(
+                        width: Sizes.width(context) * .1,
+                        height: Sizes.height(context) * .1,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(999),
+                          color: Colors.deepOrangeAccent,
                         ),
-                        if (onSnapshot != null)
-                          ...onSnapshot!.docs.map(
-                            (e) => Text(
-                              DateFormat('dd/MM/yy/hh:mm').format(DateTime.parse(e['recorded_time'].toDate().toString())),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          )
-                      ],
-                    )),
-              ),
+                        child: RotatedBox(
+                            quarterTurns: 2,
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: Colors.black,
+                            )),
+                      ),
+                    )
+                  ],
+                ),
+              )
             ],
           ),
         )
@@ -361,20 +473,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return time;
-  }
-
-  Future logout(BuildContext context) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => Center(child: CircularProgressIndicator()),
-    );
-    try {
-      await FirebaseAuth.instance.signOut();
-    } on FirebaseAuthException catch (e) {
-      log(e.toString());
-    }
-    navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 
   void _getTime() {
@@ -432,4 +530,18 @@ class _HomeScreenState extends State<HomeScreen> {
       return double.parse(str);
     }
   }
+}
+
+Future logout(BuildContext context) async {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) => Center(child: CircularProgressIndicator()),
+  );
+  try {
+    await FirebaseAuth.instance.signOut();
+  } on FirebaseAuthException catch (e) {
+    log(e.toString());
+  }
+  navigatorKey.currentState!.popUntil((route) => route.isFirst);
 }
