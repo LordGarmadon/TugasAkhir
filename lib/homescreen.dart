@@ -3,18 +3,23 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:intl/intl.dart';
 import 'package:nadiku/size.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'main.dart';
 import 'model/health_detail.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, this.snapshot});
-  final QuerySnapshot? snapshot;
+  const HomeScreen({
+    super.key,
+  });
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -23,8 +28,115 @@ class _HomeScreenState extends State<HomeScreen> {
   String _timeHMString = "";
   String _timeDateString = "";
   QuerySnapshot? onSnapshot;
+  BluetoothConnection? connection;
+  bool? isBluetoothAvailable;
+  String dataFromBluetooth = "";
+  int systole = 0, diastole = 0;
+  bool isConnected = false;
+
+  Future<bool> initBluetoothConnection() async {
+    // Get the list of paired devices
+    List<BluetoothDevice> devices = await FlutterBluetoothSerial.instance.getBondedDevices();
+    BluetoothDevice? bdev;
+    for (BluetoothDevice device in devices) {
+      if (device.name == "nadiku") {
+        bdev = device;
+        break;
+      }
+    }
+
+    if (bdev != null) {
+      // Establish a Bluetooth connection
+      BluetoothConnection newConnection = await BluetoothConnection.toAddress(bdev.address);
+      log(newConnection.toString());
+      setState(() {
+        connection = newConnection;
+      });
+      return true;
+      // Start listening for incoming data
+    }
+    return false;
+  }
+
+  void getData() {
+    connection!.input!.listen(
+      (Uint8List data) {
+        // setState(() {
+        //   isLoading = true;
+        // });
+        // Handle the received data
+        String message = String.fromCharCodes(data).trim();
+        log("Received: $message");
+        if (message.isNotEmpty) {
+          var userID = FirebaseAuth.instance.currentUser!.uid;
+          var sysdia = _convertStringToInt(message);
+          // add data to firestore
+          log(sysdia.toString());
+          setState(() {
+            systole = sysdia[0];
+            diastole = sysdia[1];
+            isConnected = true;
+          });
+          addDocs(
+            HealthDetail(
+              userId: userID,
+              systole: sysdia[0],
+              diastole: sysdia[1],
+              recordedTime: Timestamp.fromDate(
+                DateTime.now(),
+              ),
+            ),
+          );
+          processData(message);
+          // connection!.close();
+        }
+        // Process the received data as needed
+      },
+    );
+  }
+
+  void processData(String data) {
+    // Handle the received data here
+    // You can perform any required parsing or further processing
+    setState(() {
+      dataFromBluetooth = data;
+    });
+    log("Processed Data: $data");
+  }
+
+  Future<void> getIsBluetoothAvailable() async {
+    var getBluetoothInfo = await FlutterBluetoothSerial.instance.isEnabled;
+    setState(() {
+      isBluetoothAvailable = getBluetoothInfo;
+    });
+  }
+
+  bool isPermissionGranted = false;
+  bool isLoading = false;
+  Future<void> getPermission() async {
+    var bluetoothConnectPerm = await Permission.bluetoothConnect.request();
+    var bluetoothScanPerm = await Permission.bluetoothScan.request();
+    var bluetoothPerm = await Permission.bluetooth.request();
+    if (bluetoothConnectPerm == PermissionStatus.granted && bluetoothScanPerm == PermissionStatus.granted && bluetoothPerm == PermissionStatus.granted) {
+      initBluetoothConnection();
+      setState(() {
+        isPermissionGranted = true;
+      });
+    } else {
+      setState(() {
+        isPermissionGranted = false;
+      });
+    }
+  }
+
   @override
   void initState() {
+    var user_id = FirebaseAuth.instance.currentUser!.uid;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getIsBluetoothAvailable();
+      getPermission();
+      getDocs(user_id);
+    });
     _timeHMString = _formatHourMinute(DateTime.now());
     _timeDateString = _formatDateTime(DateTime.now());
     Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
@@ -71,20 +183,32 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              Column(
-                children: [
-                  Text(
-                    "Sistol/Diastol",
-                    style: TextStyle(fontSize: 20, color: Colors.white),
-                  ),
-                  Text(
-                    widget.snapshot != null
-                        ? "${widget.snapshot!.docs.first['systole']}/${widget.snapshot!.docs.first['diastole']}"
-                        : "0/0",
-                    style: TextStyle(fontSize: 20, color: Colors.white),
-                  ),
-                ],
-              ),
+              if (isLoading) CircularProgressIndicator(),
+              if (isBluetoothAvailable != null && !isBluetoothAvailable! && !isLoading)
+                Center(
+                  child: Text("Bluetooth Not Available"),
+                ),
+              if ((isBluetoothAvailable != null && isBluetoothAvailable!) && (connection == null || !connection!.isConnected) && !isLoading)
+                Center(
+                  child: Text("Connect To Nadiku First"),
+                ),
+              if ((isBluetoothAvailable != null && isBluetoothAvailable!) && (connection != null && connection!.isConnected) && onSnapshot == null && !isLoading)
+                Center(
+                  child: Text("Press Test Button Then Press Button On The Nadiku"),
+                ),
+              if ((isBluetoothAvailable != null && isBluetoothAvailable!) && (connection != null && connection!.isConnected) && onSnapshot != null && !isLoading)
+                Column(
+                  children: [
+                    Text(
+                      "Sistol/Diastol",
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+                    Text(
+                      isConnected ? "$systole/$diastole" : "0/0",
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+                  ],
+                ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -93,8 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       logout(context);
                     },
                     style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.red),
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
                     ),
                     child: Text(
                       "Disconnect",
@@ -114,22 +237,33 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         // Hapus nanti
-        GestureDetector(
-          onTap: () {
-            /// test add document
-            String userId = FirebaseAuth.instance.currentUser!.uid;
-            addDocs(userId);
-          },
-          child: Container(
-            height: 50,
-            width: 150,
-            decoration: BoxDecoration(color: Colors.purple),
-            child: Text(
-              "Test",
-              style: TextStyle(color: Colors.white),
+        if (isBluetoothAvailable != null && isBluetoothAvailable!)
+          GestureDetector(
+            onTap: () async {
+              if (isBluetoothAvailable != null && !isBluetoothAvailable!) {
+                // do nothing
+              } else if ((isBluetoothAvailable != null && isBluetoothAvailable!) && (connection == null || !connection!.isConnected)) {
+                // press to connect
+                var conn = await initBluetoothConnection();
+                if (!conn) {
+                  _jumpToSetting();
+                }
+              } else if ((isBluetoothAvailable != null && isBluetoothAvailable!) && (connection != null && connection!.isConnected) && onSnapshot == null) {
+                getData();
+              } else if ((isBluetoothAvailable != null && isBluetoothAvailable!) && (connection != null && connection!.isConnected) && onSnapshot != null) {
+                getData();
+              }
+            },
+            child: Container(
+              height: 50,
+              width: 150,
+              decoration: BoxDecoration(color: Colors.purple),
+              child: Text(
+                "Test",
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
-        ),
         Container(
           margin: EdgeInsets.only(
             right: 15,
@@ -154,10 +288,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       "Systole/Diastole",
                       style: TextStyle(color: Colors.white),
                     ),
-                    if (widget.snapshot != null)
-                      ...widget.snapshot!.docs.map(
+                    if (onSnapshot != null)
+                      ...onSnapshot!.docs.map(
                         (e) => Text(
-                          "${e['systole']}/${e['diastole']}",
+                          "${e['sistol']}/${e['diastol']}",
                           style: TextStyle(color: Colors.white),
                         ),
                       )
@@ -192,12 +326,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           "Waktu",
                           style: TextStyle(color: Colors.white),
                         ),
-                        if (widget.snapshot != null)
-                          ...widget.snapshot!.docs.map(
+                        if (onSnapshot != null)
+                          ...onSnapshot!.docs.map(
                             (e) => Text(
-                              DateFormat('dd/MM/yy/hh:mm').format(
-                                  DateTime.parse(
-                                      e['recorded_time'].toDate().toString())),
+                              DateFormat('dd/MM/yy/hh:mm').format(DateTime.parse(e['recorded_time'].toDate().toString())),
                               style: TextStyle(color: Colors.white),
                             ),
                           )
@@ -218,10 +350,7 @@ class _HomeScreenState extends State<HomeScreen> {
     var diff = date.difference(now);
     var time = '';
 
-    if (diff.inSeconds <= 0 ||
-        diff.inSeconds > 0 && diff.inMinutes == 0 ||
-        diff.inMinutes > 0 && diff.inHours == 0 ||
-        diff.inHours > 0 && diff.inDays == 0) {
+    if (diff.inSeconds <= 0 || diff.inSeconds > 0 && diff.inMinutes == 0 || diff.inMinutes > 0 && diff.inHours == 0 || diff.inHours > 0 && diff.inDays == 0) {
       time = format.format(date);
     } else {
       if (diff.inDays == 1) {
@@ -266,24 +395,41 @@ class _HomeScreenState extends State<HomeScreen> {
     return DateFormat('EEEE/dd/MM/yy').format(dateTime);
   }
 
-  Future getDocs() async {
-    CollectionReference records =
-        FirebaseFirestore.instance.collection('health_nadiku');
+  Future getDocs(String userID) async {
+    CollectionReference records = FirebaseFirestore.instance.collection('health_nadiku');
     var fetchedRecords = await records.get();
+    log("isi database" + fetchedRecords.docs.length.toString());
     setState(() {
       onSnapshot = fetchedRecords;
     });
   }
 
-  Future addDocs(String userID) async {
-    var detail = HealthDetail(
-        userId: userID,
-        systole: 160,
-        diastole: 50,
-        recordedTime: Timestamp.fromDate(DateTime.now()));
-    FirebaseFirestore.instance
-        .collection('health_nadiku')
-        .add(detail.toJson())
-        .then((value) => log(value.id));
+  Future addDocs(HealthDetail detail) async {
+    FirebaseFirestore.instance.collection('health_nadiku').add(detail.toJson()).then((value) => getDocs(detail.userId));
+  }
+
+  _jumpToSetting() {
+    AppSettings.openAppSettings(type: AppSettingsType.bluetooth);
+  }
+
+  List<int> _convertStringToInt(String data) {
+    log("sini bro" + data);
+    final splitted = data.split('/');
+    List<int> intlist = [];
+    for (var i = 0; i < splitted.length; i++) {
+      double result = getDoubleData(splitted[i]);
+
+      intlist.add(result.toInt());
+    }
+    log(intlist.toString());
+    return intlist;
+  }
+
+  double getDoubleData(String str) {
+    if (str.contains(",")) {
+      return double.parse(str.substring(0, str.indexOf(',')));
+    } else {
+      return double.parse(str);
+    }
   }
 }

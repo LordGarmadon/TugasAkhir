@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:nadiku/login.dart';
+import 'package:nadiku/main.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});
@@ -18,7 +18,7 @@ class _SplashscreenState extends State<Splashscreen> with SingleTickerProviderSt
     Future.delayed(Duration(seconds: 2), () {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => const LoginPage(),
+          builder: (_) => MainPage(),
         ),
       );
     });
