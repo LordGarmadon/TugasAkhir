@@ -69,9 +69,6 @@ class _HomeScreenState extends State<HomeScreen> {
         String message = String.fromCharCodes(data).trim();
         log("Received: $message");
         if (message.isNotEmpty) {
-          setState(() {
-            isLoading = true;
-          });
           var userID = FirebaseAuth.instance.currentUser!.uid;
           var sysdia = _convertStringToInt(message);
           // add data to firestore
@@ -80,7 +77,6 @@ class _HomeScreenState extends State<HomeScreen> {
             systole = sysdia[0];
             diastole = sysdia[1];
             isConnected = true;
-            isLoading = false;
           });
           addDocs(
             HealthDetail(
@@ -192,7 +188,11 @@ class _HomeScreenState extends State<HomeScreen> {
               if (isLoading) CircularProgressIndicator(),
               if (isBluetoothAvailable != null && !isBluetoothAvailable! && !isLoading)
                 Center(
-                  child: Text("Bluetooth Not Available"),
+                  child: Text(
+                    "Perangkat belum dikenali\nsilahkan menghubungkan bluetooth nadiku disetting",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.black),
+                  ),
                 ),
               if ((isBluetoothAvailable != null && isBluetoothAvailable!) && (connection == null || !connection!.isConnected) && !isLoading)
                 DottedBorder(
@@ -206,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.black,
                         ),
                         Text(
-                          "Aplikasi ini membutuhkan koneksi\nke alat Nadiku",
+                          "Aplikasi ini membutuhkan koneksi\nke perangkat Nadiku",
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.black),
                         ),
@@ -226,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.black,
                         ),
                         Text(
-                          "Tekan tombol hubungkan\nuntuk memunculkan data\ndari alat",
+                          "Tekan tombol hubungkan\nuntuk memunculkan data\ndari perangkat nadiku",
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.black),
                         ),
@@ -302,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(15),
           ),
-          height: Sizes.height(context) * .35,
+          height: Sizes.height(context) * .4,
           width: double.infinity,
           child: onSnapshot != null
               ? Column(
