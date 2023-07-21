@@ -16,7 +16,7 @@ class _DashPainter extends CustomPainter {
     this.strokeWidth = 2,
     this.dashPattern = const <double>[3, 1],
     this.color = Colors.black,
-    this.borderType = BorderType.Rect,
+    this.borderType = BorderType.rect,
     this.radius = const Radius.circular(0),
     this.strokeCap = StrokeCap.butt,
     this.customPath,
@@ -44,33 +44,33 @@ class _DashPainter extends CustomPainter {
       ..strokeCap = strokeCap
       ..style = PaintingStyle.stroke;
 
-    Path _path;
+    Path path;
     if (customPath != null) {
-      _path = dashPath(
+      path = dashPath(
         customPath!(size),
         dashArray: CircularIntervalList(dashPattern),
       );
     } else {
-      _path = _getPath(size);
+      path = _getPath(size);
     }
 
-    canvas.drawPath(_path, paint);
+    canvas.drawPath(path, paint);
   }
 
   /// Returns a [Path] based on the the [borderType] parameter
   Path _getPath(Size size) {
     Path path;
     switch (borderType) {
-      case BorderType.Circle:
+      case BorderType.circle:
         path = _getCirclePath(size);
         break;
-      case BorderType.RRect:
+      case BorderType.rRect:
         path = _getRRectPath(size, radius);
         break;
-      case BorderType.Rect:
+      case BorderType.rect:
         path = _getRectPath(size);
         break;
-      case BorderType.Oval:
+      case BorderType.oval:
         path = _getOvalPath(size);
         break;
     }
@@ -142,6 +142,6 @@ class _DashPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_DashPainter oldDelegate) {
-    return oldDelegate.strokeWidth != this.strokeWidth || oldDelegate.color != this.color || oldDelegate.dashPattern != this.dashPattern || oldDelegate.padding != this.padding || oldDelegate.borderType != this.borderType;
+    return oldDelegate.strokeWidth != strokeWidth || oldDelegate.color != color || oldDelegate.dashPattern != dashPattern || oldDelegate.padding != padding || oldDelegate.borderType != borderType;
   }
 }

@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:nadiku/dialog_box/custom_dialog_box.dart';
 import 'package:nadiku/homescreen.dart';
 import 'package:nadiku/size.dart';
 
@@ -26,7 +27,17 @@ class _MainAppBarState extends State<MainAppBar> {
           children: [
             GestureDetector(
               onTap: () {
-                logout(context);
+                showDialog(
+                    context: context,
+                    builder: (_) => DoubleButtonDialog(
+                          title: "Logout",
+                          description: "Are you sure you want to log out from current user?",
+                          firstButton: "Yes",
+                          secondButton: "No",
+                          onFirstButtonTap: () {
+                            logout(context);
+                          },
+                        ));
               },
               child: Container(
                 decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(999)),

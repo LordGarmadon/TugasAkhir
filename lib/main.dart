@@ -21,7 +21,9 @@ Future main() async {
 final navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
-  static final String title = 'Setup Firebase';
+  final String title = 'Setup Firebase';
+
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) => MaterialApp(

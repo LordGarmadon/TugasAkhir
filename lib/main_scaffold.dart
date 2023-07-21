@@ -21,7 +21,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   Widget build(BuildContext context) {
     return MainAppBar(
       body: ListView(
-        children: [HomeScreen()],
+        children: const [HomeScreen()],
       ),
       onSelectIndex: (i) {
         setState(() {

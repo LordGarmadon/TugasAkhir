@@ -1,21 +1,26 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_field, prefer_interpolation_to_compose_strings, use_build_context_synchronously
 
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:csv/csv.dart';
+import 'package:external_path/external_path.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:intl/intl.dart';
 import 'package:nadiku/custom/dotted_border.dart';
+import 'package:nadiku/dialog_box/custom_dialog_box.dart';
 import 'package:nadiku/size.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'main.dart';
 import 'model/health_detail.dart';
+import 'model/readable_detail.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -130,23 +135,27 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Timer _startTimer() {
+    return Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
+  }
+
   @override
   void initState() {
-    var user_id = FirebaseAuth.instance.currentUser!.uid;
+    var userId = FirebaseAuth.instance.currentUser!.uid;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getIsBluetoothAvailable();
       getPermission();
-      getDocs(user_id);
+      getDocs(userId);
     });
     _timeHMString = _formatHourMinute(DateTime.now());
     _timeDateString = _formatDateTime(DateTime.now());
-    Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
+    _startTimer();
     super.initState();
   }
 
   @override
   void dispose() {
-    _getTime();
+    _startTimer();
     super.dispose();
   }
 
@@ -172,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: Text(
-                      FirebaseAuth.instance.currentUser!.email!,
+                      FirebaseAuth.instance.currentUser!.displayName != null && FirebaseAuth.instance.currentUser!.displayName!.isNotEmpty ? FirebaseAuth.instance.currentUser!.displayName! : FirebaseAuth.instance.currentUser!.email!,
                       style: TextStyle(fontSize: 20, color: Colors.black),
                     ),
                   ),
@@ -433,8 +442,48 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           GestureDetector(
-                            onTap: () {
-                              // fungsi download
+                            onTap: () async {
+                              var status = await Permission.storage.request();
+                              if (!status.isGranted) {
+                                await Permission.storage.request();
+                              } else {
+                                // download csv function
+                                var data = onSnapshot!.docs.map((e) => ReadableDetail(
+                                        name: FirebaseAuth.instance.currentUser!.displayName != null && FirebaseAuth.instance.currentUser!.displayName!.isNotEmpty
+                                            ? FirebaseAuth.instance.currentUser!.displayName!
+                                            : FirebaseAuth.instance.currentUser!.email!,
+                                        diastole: e['diastol'],
+                                        systole: e['sistol'],
+                                        recordedTime: DateFormat('EEEE/dd/MM/yy hh:mm').format(DateTime.parse(e['recorded_time'].toDate().toString())))
+                                    .toJson());
+                                var associatedList = data.toList();
+                                // log(associatedList.toString());
+                                List<List<dynamic>> rows = [];
+
+                                List<dynamic> row = [];
+                                row.add("nama");
+                                row.add("sistol");
+                                row.add("diastol");
+                                row.add("recorded_time");
+                                rows.add(row);
+                                for (int i = 0; i < associatedList.length; i++) {
+                                  List<dynamic> row = [];
+                                  row.add(associatedList[i]["nama"]);
+                                  row.add(associatedList[i]["sistol"]);
+                                  row.add(associatedList[i]["diastol"]);
+                                  row.add(associatedList[i]["recorded_time"]);
+                                  rows.add(row);
+                                }
+                                String csv = const ListToCsvConverter().convert(rows);
+                                String dir = await ExternalPath.getExternalStoragePublicDirectory(ExternalPath.DIRECTORY_DOCUMENTS);
+
+                                String file = "$dir";
+                                String fileName = "nadiku_${DateTime.now().year}${DateTime.now().month}${DateTime.now().day}${DateTime.now().hour.toString()}${DateTime.now().second}";
+                                File f = File(file + "/$fileName.csv");
+
+                                f.writeAsString(csv);
+                                showDialog(context: context, builder: (_) => CustomDialog(title: "Successfully Download Data", description: "Data has been downloaded under file name $fileName"));
+                              }
                             },
                             child: Container(
                               width: Sizes.width(context) * .1,
@@ -489,10 +538,12 @@ class _HomeScreenState extends State<HomeScreen> {
     final DateTime now = DateTime.now();
     final String formattedHourMinute = _formatHourMinute(now);
     final String formattedDate = _formatDateTime(now);
-    setState(() {
-      _timeHMString = formattedHourMinute;
-      _timeDateString = formattedDate;
-    });
+    if (mounted) {
+      setState(() {
+        _timeHMString = formattedHourMinute;
+        _timeDateString = formattedDate;
+      });
+    }
   }
 
   String _formatHourMinute(DateTime dateTime) {
@@ -506,7 +557,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Future getDocs(String userID) async {
     CollectionReference records = FirebaseFirestore.instance.collection('health_nadiku');
     var fetchedRecords = await records.where("user_id", isEqualTo: userID).orderBy("recorded_time", descending: true).get();
-    log("isi database" + fetchedRecords.docs.length.toString());
     setState(() {
       onSnapshot = fetchedRecords;
     });
@@ -521,7 +571,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<int> _convertStringToInt(String data) {
-    log("sini bro" + data);
     final splitted = data.split('/');
     List<int> intlist = [];
     for (var i = 0; i < splitted.length; i++) {
