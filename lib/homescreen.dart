@@ -18,6 +18,7 @@ import 'package:nadiku/dialog_box/custom_dialog_box.dart';
 import 'package:nadiku/size.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'lifecycle/custom_lifecycle.dart';
 import 'main.dart';
 import 'model/health_detail.dart';
 import 'model/readable_detail.dart';
@@ -39,6 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String dataFromBluetooth = "";
   int systole = 0, diastole = 0;
   bool isConnected = false;
+  CustomWidgetBindingObserver? _widgetBindingObserver;
+  bool triggerCheckBluetooth = false;
 
   Future<bool> initBluetoothConnection() async {
     // Get the list of paired devices
@@ -150,6 +153,21 @@ class _HomeScreenState extends State<HomeScreen> {
     _timeHMString = _formatHourMinute(DateTime.now());
     _timeDateString = _formatDateTime(DateTime.now());
     _startTimer();
+    _widgetBindingObserver = CustomWidgetBindingObserver(onPaused: () {
+      if (FirebaseAuth.instance.currentUser!.email != null && FirebaseAuth.instance.currentUser!.email!.isNotEmpty) {
+        setState(() {
+          triggerCheckBluetooth = true;
+        });
+      }
+    }, onResume: () async {
+      await getIsBluetoothAvailable();
+      await getPermission();
+      await getDocs(userId);
+      setState(() {
+        triggerCheckBluetooth = false;
+      });
+    });
+    WidgetsBinding.instance.addObserver(_widgetBindingObserver!);
     super.initState();
   }
 
