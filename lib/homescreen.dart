@@ -18,6 +18,7 @@ import 'package:nadiku/dialog_box/custom_dialog_box.dart';
 import 'package:nadiku/size.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'custom/day_in_indonesia.dart';
 import 'lifecycle/custom_lifecycle.dart';
 import 'main.dart';
 import 'model/health_detail.dart';
@@ -433,8 +434,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 crossAxisAlignment: CrossAxisAlignment.center,
                                                 children: [
                                                   Text(
-                                                    DateFormat('EEEE/dd/MM/yy').format(DateTime.parse(e['recorded_time'].toDate().toString())),
+                                                    "${getDayInIndonesia(DateFormat('EEEE').format(DateTime.parse(e['recorded_time'].toDate().toString())))} ${DateFormat('dd/MM/yy').format(DateTime.parse(e['recorded_time'].toDate().toString()))}",
                                                     style: TextStyle(color: Colors.black, fontSize: 16),
+                                                    textAlign: TextAlign.center,
                                                   ),
                                                   Text(
                                                     DateFormat('hh:mm').format(DateTime.parse(e['recorded_time'].toDate().toString())),
@@ -569,7 +571,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String _formatDateTime(DateTime dateTime) {
-    return DateFormat('EEEE/dd/MM/yy').format(dateTime);
+    return "${getDayInIndonesia(DateFormat('EEEE').format(dateTime))}/${DateFormat('dd/MM/yy').format(dateTime)}";
   }
 
   Future getDocs(String userID) async {
