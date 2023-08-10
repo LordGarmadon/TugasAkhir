@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nadiku/ForgotPassword.dart';
 import 'package:nadiku/dialog_box/custom_dialog_box.dart';
 import 'package:nadiku/signup.dart';
 
@@ -155,7 +156,12 @@ class _LoginPageState extends State<LoginPage> {
 
 _forgotPassword(context) {
   return TextButton(
-    onPressed: () {},
+    onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ForgotPasswordPage()),
+      );
+    },
     style: TextButton.styleFrom(primary: Color.fromRGBO(237, 121, 71, 1)),
     child: Text("Lupa Password?"),
   );
