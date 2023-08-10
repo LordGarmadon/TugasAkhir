@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:nadiku/splashscreen_telu.dart';
+import 'package:nadiku/main.dart';
 
-class Splashscreen extends StatefulWidget {
-  const Splashscreen({super.key});
+class SplashscreenU extends StatefulWidget {
+  const SplashscreenU({super.key});
 
   @override
-  State<Splashscreen> createState() => _SplashscreenState();
+  State<SplashscreenU> createState() => _SplashscreenState();
 }
 
-class _SplashscreenState extends State<Splashscreen> with SingleTickerProviderStateMixin {
+class _SplashscreenState extends State<SplashscreenU> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
@@ -18,7 +18,7 @@ class _SplashscreenState extends State<Splashscreen> with SingleTickerProviderSt
     Future.delayed(Duration(seconds: 2), () {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => SplashscreenU(),
+          builder: (_) => MainPage(),
         ),
       );
     });
@@ -41,12 +41,12 @@ class _SplashscreenState extends State<Splashscreen> with SingleTickerProviderSt
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/images/heart.png',
+              'assets/images/telu.png',
               height: 250,
               width: 250,
             ),
             Text(
-              "NADIKU",
+              "Telkom University",
               style: TextStyle(fontStyle: FontStyle.normal, color: Colors.black, fontSize: 32),
             )
           ],
