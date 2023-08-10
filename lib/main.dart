@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:nadiku/login.dart';
-import 'package:nadiku/main_scaffold.dart';
 import 'package:nadiku/splashscreen.dart';
+import 'package:nadiku/verifyEmail.dart';
 
 import 'firebase_options.dart';
 
@@ -56,7 +56,7 @@ class MainPage extends StatelessWidget {
             );
           } else if (snapshot.hasData) {
             log('success');
-            return MainScaffold();
+            return VerifyEmail();
           } else {
             return LoginPage();
           }
