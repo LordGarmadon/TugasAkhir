@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:intl/intl.dart';
 import 'package:nadiku/custom/dotted_border.dart';
+import 'package:nadiku/device_permission.dart';
 import 'package:nadiku/dialog_box/custom_dialog_box.dart';
 import 'package:nadiku/size.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -463,10 +464,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           GestureDetector(
                             onTap: () async {
-                              var status = await Permission.storage.request();
-                              if (!status.isGranted) {
-                                await Permission.storage.request();
-                              } else {
+                              var status = await getStoragePermission();
+                              if (status) {
                                 // download csv function
                                 var data = onSnapshot!.docs.map((e) => ReadableDetail(
                                         name: FirebaseAuth.instance.currentUser!.displayName != null && FirebaseAuth.instance.currentUser!.displayName!.isNotEmpty
